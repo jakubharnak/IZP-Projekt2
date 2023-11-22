@@ -1,8 +1,12 @@
+// cd programming\GitHub\IZP-Projekt2\main
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
+void help_call(){
+    printf("--test <filename.txt> | --rpath <row> <col> <filename.txt> | --lpath <row> <col> <filename.txt>\n");
+}
 
 // 1.poduloha
 typedef struct {
@@ -11,51 +15,44 @@ typedef struct {
     unsigned char *cells;
 } Map;
 
-// 2.poduloha
-bool isborder(Map *map, int r, int c, int border) {
+bool fcheck(char *fname){
+    FILE *file;
+    file = fopen(fname, "r");
+
+    if(file == NULL)
+        return false;
+    
+    fclose(file);
+    return true;
+}
+
+void loadMap(Map *map, const char *filename) {
     
 }
+
+bool mazetest(Map *map) {
+    
+}
+
+bool mazetest_values(Map *map) {
+    
+}
+
+// 2.poduloha
+bool isborder(Map *map, int r, int c, int border) {}
+
+// RETURN DOWNWARD trojuhelnik dolu
+// RETURN UPWARD trojuhelnik nahoru
+int orientation(int row, int col){}
+
+// TRUE mozno vstoupit do blusdiste pres trojuhelnik [r; c]
+// FALSE(1) mozno vstoupit a okamzite vystoupit (napise jenom vstupni souradnice)
+// FALSE(2) nelze vstoupit
+bool first_cell_checkup(Map map, int *r, int *c){}
 
 //3.poduloha
 int start_border(Map *map, int r, int c, int leftright);
 
-
-void loadMap(Map *map, const char *filename) {
-    FILE *file = fopen(filename, "r");
-    if (file == NULL) {
-        fprintf(stderr, "Chyba pri otvarani suboru\n");
-        exit(EXIT_FAILURE);
-    }
-
-    // Nacitanie velkosti mapy
-    if (fscanf(file, "%d %d", &map->rows, &map->cols) != 2) {
-        fprintf(stderr, "Chyba nacitania velikosti mapy\n");
-        fclose(file);
-        exit(EXIT_FAILURE);
-    }
-
-    // Alokace pamati pre bunky mapy
-    map->cells = (unsigned char *)malloc(map->rows * map->cols * sizeof(unsigned char));
-    if (map->cells == NULL) {
-        fprintf(stderr, "Chyba pri alokacii pamati pro mapu\n");
-        fclose(file);
-        exit(EXIT_FAILURE);
-    }
-
-    // Nacitanie hodnot jednotlivych buniek
-    for (int i = 0; i < map->rows; i++) {
-        for (int j = 0; j < map->cols; j++) {
-            if (fscanf(file, "%s",&map->cells[i * map->cols + j]) != 1) {
-                fprintf(stderr, "Chyba nacitani bunky mapy na pozici [%d, %d]\n", i, j);
-                free(map->cells);
-                fclose(file);
-                exit(EXIT_FAILURE);
-            }
-        }
-    }
-
-    fclose(file);
-}
 
 // Uvolnenie pamati alokovanej pre mapu
 void freeMap(Map *map) {
@@ -84,17 +81,15 @@ int main(int argc, char *argv[]) {
     }
 
     Map map;
-    int startRow, startCol;
 
     // Zpracování argumentů
-    if (strcmp(argv[1], "--help") == 0) {
+    if ((strcmp(argv[1], "--help") == 0) && argc == 2) {
         // Vytiskněte nápovědu
-        printf("Usage: %s --help | --test <filename> | --rpath <row> <col> <filename> | --lpath <row> <col> <filename> | --shortest <row> <col> <filename>\n", argv[0]);
-    } else if (strcmp(argv[1], "--test") == 0) {
+        help_call();
+    } else if ((strcmp(argv[1], "--test") == 0) && argc == 3) {
         // Testování, např. ./maze --test bludiste.txt
-        if (argc != 3) {
-            fprintf(stderr, "Invalid number of arguments for --test\n");
-            return EXIT_FAILURE;
+        if(fcheck(argv[2])){
+            
         }
         loadMap(&map, argv[2]);
         // Zde můžete přidat kontrolu validity mapy
