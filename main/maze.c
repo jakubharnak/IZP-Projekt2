@@ -43,7 +43,7 @@ void next_border(Map map, int r, int c, int from, int leftright) {
 	if (r < 1 || r > map.rows || c < 1 || c > map.cols)  {
 		return;
 	}
-	fprintf(stderr, "%d,%d\n",r,c);
+	printf("%d,%d\n",r,c);
 	//fprintf(stderr, "%d,%d     %d\n",r,c,from);
 	int first = -1;
 	int second = -1;
@@ -314,7 +314,8 @@ void loadMap(Map *map, const char *filename) {
         for (int j = 0; j < map->cols; j++) {
         	int charakter;
             if (fscanf(file, "%d",&charakter) != 1) {
-                fprintf(stderr, "Chyba nacitani bunky mapy na pozici [%d, %d]\n", i, j);
+				fprintf(stderr,"Invalid\n");
+                printf("Invalid\n");
                 free(map->cells);
                 fclose(file);
                 exit(EXIT_FAILURE);
