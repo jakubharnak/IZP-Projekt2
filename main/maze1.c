@@ -43,7 +43,7 @@ void next_border(Map map, int r, int c, int from, int leftright) {
 	if (r < 1 || r > map.rows || c < 1 || c > map.cols)  {
 		return;
 	}
-	fprintf(stderr, "%d,%d\n",r,c);
+	printf("%d,%d\n",r,c);
 	//fprintf(stderr, "%d,%d     %d\n",r,c,from);
 	int first = -1;
 	int second = -1;
