@@ -1,3 +1,10 @@
+/*
+ * file:       	 maze.c
+ * compilation:  gcc -std=c11 -Wall -Wextra -Werror maze.c -o maze
+ * author:       Jakub Harnak, xharnaj00
+ * Projekt 2:    Prace s datovymi strukturami
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
