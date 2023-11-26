@@ -24,6 +24,7 @@ bool getBit(unsigned char byte, int p)
      return false;
 }
 
+// 2.poduloha
 bool isborder(Map map, int r, int c, int border) {
 	//if border 0 kontrolujeme lavu hranicu
 	//if border 1 kontrolujeme pravu hranicu
@@ -255,8 +256,6 @@ void next_border(Map map, int r, int c, int from, int leftright) {
 }
 
 int pocetKrokov = 0;
-
-// 2.poduloha
 
 //3.poduloha
 void start_border(Map map, int r, int c, int leftright) {
