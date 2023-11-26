@@ -10,9 +10,6 @@ typedef struct {
     unsigned char *cells;
 } Map;
 
-int pocetKrokov = 0;
-
-// 2.poduloha
 bool getBit(unsigned char byte, int p)
 {
      for (int i = 2; i >= 0; i--) {
@@ -42,268 +39,248 @@ bool isborder(Map map, int r, int c, int border) {
 
 }
 
-void next_border(Map map, int r, int c, int leftright, int from) {
-
+void next_border(Map map, int r, int c, int from, int leftright) {
+	if (r < 1 || r > map.rows || c < 1 || c > map.cols)  {
+		return;
+	}
+	fprintf(stderr, "%d,%d\n",r,c);
+	//fprintf(stderr, "%d,%d     %d\n",r,c,from);
 	int first = -1;
 	int second = -1;
 	int third = -1;
 
-	if (from == 1) {
-		if (c % 2 == 0 && r % 2 == 0) {
-			first = 1;
-			second = 2;
-			third = 0;
-		} else if (c % 2 == 0 && r % 2 == 1) {
-			first = 3;
-			second = 1;
-			third = 0;
-		} else if (c % 2 == 1 && r % 2 == 0) {
-			first = 3;
-			second = 1;
-			third = 0;
-		} else if (c % 2 == 1 && r % 2 == 1) {
-			first = 1;
-			second = 2;
-			third = 0;
-		}
-	} else if (from == 0) {
-		if (c % 2 == 0 && r % 2 == 0) {
-			first = 2;
-			second = 0;
-			third = 1;
-		} else if (c % 2 == 0 && r % 2 == 1) {
-			first = 0;
-			second = 3;
-			third = 1;
-		} else if (c % 2 == 1 && r % 2 == 0) {
-			first = 2;
-			second = 1;
-			third = 0;
-		} else if (c % 2 == 1 && r % 2 == 1) {
-			first = 2;
-			second = 0;
-			third = 1;
-		}
-	} else if (from == 3) {
-		if (c % 2 == 0 && r % 2 == 0) {
-			first = 0;
-			second = 1;
-			third = 2;
-		} else if (c % 2 == 0 && r % 2 == 1) {
-			first = 0;
-			second = 1;
-			third = 2;
-		} else if (c % 2 == 1 && r % 2 == 0) {
-			first = 0;
-			second = 1;
-			third = 2;
-		} else if (c % 2 == 1 && r % 2 == 1) {
-			first = 0;
-			second = 1;
-			third = 2;
-		}
-	} else if (from == 2) {
-		if (c % 2 == 0 && r % 2 == 0) {
-			first = 1;
-			second = 0;
-			third = 3;
-		} else if (c % 2 == 0 && r % 2 == 1) {
-			first = 1;
-			second = 0;
-			third = 3;
-		} else if (c % 2 == 1 && r % 2 == 0) {
-			first = 1;
-			second = 0;
-			third = 3;
-		} else if (c % 2 == 1 && r % 2 == 1) {
-			first = 1;
-			second = 0;
-			third = 3;
-		}
-	}
-	//fprintf(stderr,"%d,%d - %d - %d %d %d\n",r,c,from, first, second, third);
-
-	int nextRow = r;
-	int nextCol = c;
-
-	int fromNext = -1;
-
-	bool isBorder = isborder(map, r, c, first);
-	if (isBorder == true) {
-		isBorder = isborder(map, r, c, second);
-		if (isBorder == true) {
-			isBorder = isborder(map, r, c, third);
-			if (isBorder == true) {
-			} else  {
-				//fprintf(stderr,"third %d\n",third);
-				fromNext = third;
-				if (third == 0) {
-					nextCol = nextCol - 1;
-				} else if (third == 1) {
-					nextCol = nextCol + 1;
-				} else if (third == 2) {
-					nextRow = nextRow - 1;
-				} else {
-					nextRow = nextRow + 1;
-				}
+	if (((r%2 == 0)&& (c%2 == 1)) || ((r%2 == 1) && (c%2 == 0)))  {
+		if (from == 0)  {
+			if (leftright == 0) {
+				first = 2;
+				second = 1;
+				third = 0;
+			} else {
+				first = 1;
+				second = 2;
+				third = 0;
+			}
+		} else if (from == 1)  {
+			if (leftright == 0) {
+				first = 0;
+				second = 2;
+				third = 1;
+			} else {
+				first = 2;
+				second = 0;
+				third = 1;
 			}
 		} else  {
-			//fprintf(stderr,"second %d\n",second);
-			fromNext = second;
-			if (second == 0) {
-				nextCol = nextCol - 1;
-			} else if (second == 1) {
-				nextCol = nextCol + 1;
-			} else if (second == 2) {
-				nextRow = nextRow - 1;
+			if (leftright == 0) {
+				first = 1;
+				second = 0;
+				third = 2;
 			} else {
-				nextRow = nextRow + 1;
+				first = 0;
+				second = 1;
+				third = 2;
 			}
 		}
-	} else {
-		//fprintf(stderr,"first %d\n",first);
-		fromNext = first;
-		if (first == 0) {
-			nextCol = nextCol - 1;
-		} else if (first == 1) {
-			nextCol = nextCol + 1;
-		} else if (first == 2) {
-			nextRow = nextRow - 1;
-		} else {
-			nextRow = nextRow + 1;
+		bool isBorder = isborder(map, r, c, first);
+		if (isBorder == true)  {
+			bool isBorder = isborder(map, r, c, second);
+			if (isBorder == true)  {
+				bool isBorder = isborder(map, r, c, third);
+				if (isBorder == true)  {
+				} else  {
+					int nextR = r;
+					int nextC = c;
+					if (third == 0) {
+						nextC = c - 1;
+					}
+					if (third == 1) {
+						nextC = c + 1;
+					}
+					if (third == 2) {
+						nextR = r + 1;
+					}
+					int nextFrom = third;
+					if (third == 0)  {
+						nextFrom = 1;
+					} else if (third == 1)  {
+						nextFrom = 0;
+					}
+					//fprintf(stderr, "%d %d\n",third,nextFrom);
+					next_border(map,nextR,nextC,nextFrom,leftright);
+				}
+			} else  {
+				int nextR = r;
+				int nextC = c;
+				if (second == 0) {
+					nextC = c - 1;
+				}
+				if (second == 1) {
+					nextC = c + 1;
+				}
+				if (second == 2) {
+					nextR = r + 1;
+				}
+				int nextFrom = second;
+				if (second == 0)  {
+					nextFrom = 1;
+				} else if (second == 1)  {
+					nextFrom = 0;
+				}
+				//fprintf(stderr, "%d %d\n",second,nextFrom);
+				next_border(map,nextR,nextC,nextFrom,leftright);
+			}
+		} else  {
+			int nextR = r;
+			int nextC = c;
+			if (first == 0) {
+				nextC = c - 1;
+			}
+			if (first == 1) {
+				nextC = c + 1;
+			}
+			if (first == 2) {
+				nextR = r + 1;
+			}
+			int nextFrom = first;
+			if (first == 0)  {
+				nextFrom = 1;
+			} else if (first == 1)  {
+				nextFrom = 0;
+			}
+			//fprintf(stderr, "%d %d\n",first,nextFrom);
+			next_border(map,nextR,nextC,nextFrom,leftright);
 		}
-	}
-	if (nextRow < 1 || nextCol < 1 || nextRow > map.rows || nextCol > map.cols || (r == nextRow && c == nextCol)) {
-		//fprintf(stderr,"Koniec dalsieho hladania");
 	} else {
-		pocetKrokov = pocetKrokov + 1;
-		fprintf(stderr,"%d,%d\n",nextRow, nextCol);
-		//if (pocetKrokov < 25) {
-			next_border(map,nextRow,nextCol,leftright,fromNext);
-		//} else {
-
-		//}
+		if (from == 0)  {
+			if (leftright == 1) {
+				first = 2;
+				second = 1;
+				third = 0;
+			} else {
+				first = 1;
+				second = 2;
+				third = 0;
+			}
+		} else if (from == 1)  {
+			if (leftright == 1) {
+				first = 0;
+				second = 2;
+				third = 1;
+			} else {
+				first = 2;
+				second = 0;
+				third = 1;
+			}
+		} else  {
+			if (leftright == 1) {
+				first = 1;
+				second = 0;
+				third = 2;
+			} else {
+				first = 0;
+				second = 1;
+				third = 2;
+			}
+		}
+		bool isBorder = isborder(map, r, c, first);
+		if (isBorder == true)  {
+			bool isBorder = isborder(map, r, c, second);
+			if (isBorder == true)  {
+				bool isBorder = isborder(map, r, c, third);
+				if (isBorder == true)  {
+				} else  {
+					int nextR = r;
+					int nextC = c;
+					if (third == 0) {
+						nextC = c - 1;
+					}
+					if (third == 1) {
+						nextC = c + 1;
+					}
+					if (third == 2) {
+						nextR = r - 1;
+					}
+					int nextFrom = third;
+					if (third == 0)  {
+						nextFrom = 1;
+					} else if (third == 1)  {
+						nextFrom = 0;
+					}
+					//fprintf(stderr, "%d %d\n",third,nextFrom);
+					next_border(map,nextR,nextC,nextFrom,leftright);
+				}
+			} else  {
+				int nextR = r;
+				int nextC = c;
+				if (second == 0) {
+					nextC = c - 1;
+				}
+				if (second == 1) {
+					nextC = c + 1;
+				}
+				if (second == 2) {
+					nextR = r - 1;
+				}
+				int nextFrom = second;
+				if (second == 0)  {
+					nextFrom = 1;
+				} else if (second == 1)  {
+					nextFrom = 0;
+				}
+				//fprintf(stderr, "%d %d\n",second,nextFrom);
+				next_border(map,nextR,nextC,nextFrom,leftright);
+			}
+		} else  {
+			int nextR = r;
+			int nextC = c;
+			if (first == 0) {
+				nextC = c - 1;
+			}
+			if (first == 1) {
+				nextC = c + 1;
+			}
+			if (first == 2) {
+				nextR = r - 1;
+			}
+			int nextFrom = first;
+			if (first == 0)  {
+				nextFrom = 1;
+			} else if (first == 1)  {
+				nextFrom = 0;
+			}
+			//fprintf(stderr, "%d %d\n",first,nextFrom);
+			next_border(map,nextR,nextC,nextFrom,leftright);
+		}
 	}
 }
 
+int pocetKrokov = 0;
+
+// 2.poduloha
 
 //3.poduloha
 void start_border(Map map, int r, int c, int leftright) {
-	//leftRight = 1 pre vyhladavanie podla pravej ruky
-	//leftRight = 0 pre vyhladavanie podla lavej ruky;
-
-	int nextRow = r;
-	int nextCol = c;
-
-	int from = -1;
-
-	if (r % 2 == 1) {
-		//fprintf(stderr, "Neparny riadok\n");
-		if (c % 2 == 1)  {
-			//fprintf(stderr, "Neparny stlpec\n");
-			bool isBorder = isborder(map, r, c, 2);
-			if (isBorder == true) {
-				//fprintf(stderr, "Dole je hranica\n");
-				isBorder = isborder(map, r, c, 0);
-				if (isBorder == true) {
-					//fprintf(stderr, "Vpravo je hranica\n");
-					isBorder = isborder(map, r, c, 1);
-					if (isBorder == true) {
-						//fprintf(stderr, "Bunka je uzavreta\n");
-					} else  {
-						//fprintf(stderr, "Ideme vlavo\n");
-						nextCol = nextCol-1;
-					}
-				} else  {
-					//fprintf(stderr, "Ideme vpravo\n");
-					nextCol = nextCol + 1;
-				}
-			} else  {
-				//fprintf(stderr, "Ideme dole\n");
-				nextRow = nextRow+1;
-			}
-		} else  {
-			//fprintf(stderr, "Parny stlpec\n");
-			bool isBorder = isborder(map, r, c, 1);
-			if (isBorder == true) {
-				//fprintf(stderr, "Vpravo je hranica\n");
-				isBorder = isborder(map, r, c, 0);
-				if (isBorder == true) {
-					//fprintf(stderr, "Vlavo je hranica\n");
-					isBorder = isborder(map, r, c, 2);
-					if (isBorder == true) {
-						//fprintf(stderr, "Bunka je uzavreta\n");
-					} else  {
-						//fprintf(stderr, "Ideme dole\n");
-						nextRow = nextRow + 1;
-					}
-				} else  {
-					//fprintf(stderr, "Ideme vlavo\n");
-					nextCol = nextCol - 1;
-				}
-			} else  {
-				//fprintf(stderr, "Ideme vpravo\n");
-				nextCol = nextCol + 1;
-			}
-		}
-	} else {
-		//fprintf(stderr, "Parny riadok\n");
-		if (c % 2 == 1)  {
-			//fprintf(stderr, "Neparny stlpec\n");
-			bool isBorder = isborder(map, r, c, 2);
-			if (isBorder == true) {
-				//fprintf(stderr, "Dole je hranica\n");
-				isBorder = isborder(map, r, c, 1);
-				if (isBorder == true) {
-					//fprintf(stderr, "Vpravo je hranica\n");
-					isBorder = isborder(map, r, c, 0);
-					if (isBorder == true) {
-						//fprintf(stderr, "Bunka je uzavreta\n");
-					} else  {
-						//fprintf(stderr, "Ideme vlavo\n");
-						nextRow = nextRow-1;
-					}
-				} else  {
-					//fprintf(stderr, "Ideme vpravo\n");
-					nextCol = nextCol + 1;
-					from = 1;
-				}
-			} else  {
-				//fprintf(stderr, "Ideme dole\n");
-				nextRow = nextRow+1;
-			}
-		} else  {
-			//fprintf(stderr, "Parny stlpec\n");
-			bool isBorder = isborder(map, r, c, 1);
-			if (isBorder == true) {
-				//fprintf(stderr, "Vpravo je hranica\n");
-				isBorder = isborder(map, r, c, 2);
-				if (isBorder == true) {
-					//fprintf(stderr, "Hore je hranica\n");
-					isBorder = isborder(map, r, c, 0);
-					if (isBorder == true) {
-						//fprintf(stderr, "Bunka je uzavreta\n");
-					} else  {
-						//fprintf(stderr, "Ideme vlavo\n");
-						nextCol = nextCol-1;
-					}
-				} else  {
-					//fprintf(stderr, "Ideme hore\n");
-					nextRow = nextRow - 1;
-				}
-			} else  {
-				//fprintf(stderr, "Ideme vparvo\n");
-				nextCol = nextCol+1;
-			}
+	int from = 0;
+	bool isBorder0 = isborder(map, r, c, 0);
+	if (isBorder0 == false) {
+		if (c-1 == 0)  {
+			from = 0;
 		}
 	}
-	if (nextRow < 1 || nextCol < 1 || nextRow > map.rows || nextCol > map.cols || (r == nextRow && c == nextCol)) {
-		//fprintf(stderr,"Koniec hladania");
-	} else {
-		pocetKrokov = pocetKrokov + 1;
-		fprintf(stderr,"%d,%d\n",nextRow, nextCol);
-		next_border(map,nextRow,nextCol,leftright,from);
+	bool isBorder1 = isborder(map, r, c, 1);
+	if (isBorder1 == false) {
+		if (c+1 > map.cols) {
+			from = 1;
+		}
 	}
+	bool isBorder2 = isborder(map, r, c, 2);
+	if (isBorder2 == false) {
+		if (r+1 > map.rows || r-1 == 0) {
+			from = 2;
+		}
+	}
+
+	next_border(map, r, c, from, leftright);
 }
 
 int getMapValue(Map *map, int r, int c) {
@@ -359,13 +336,11 @@ void freeMap(Map *map) {
 }
 
 void findPathR(Map map, int startRow, int startCol) {
-	fprintf(stderr,"%d,%d\n",startRow, startCol);
-	start_border(map, startRow, startCol, 1);
+	start_border(map,startRow,startCol,0);
 }
 
 void findPathL(Map map, int startRow, int startCol) {
-	fprintf(stderr,"%d,%d\n",startRow, startCol);
-	start_border(map, startRow, startCol, 0);
+	start_border(map,startRow,startCol,1);
 }
 
 int main(int argc, char *argv[]) {
@@ -399,7 +374,7 @@ int main(int argc, char *argv[]) {
         if (strcmp(argv[1], "--rpath") == 0) {
         	findPathR(map, atoi(argv[2]), atoi(argv[3]));
         } else {
-        	findPathL(map, (int)argv[2], (int)argv[3]);
+        	findPathL(map, atoi(argv[2]), atoi(argv[3]));
         }
     }  else {
         fprintf(stderr, "Invalid option: %s\n", argv[1]);
