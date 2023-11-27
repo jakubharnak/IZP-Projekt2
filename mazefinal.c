@@ -369,8 +369,10 @@ int main(int argc, char *argv[]) {
         loadMap(&map, argv[4]);
         if (strcmp(argv[1], "--rpath") == 0) {
             findPathR(map, atoi(argv[2]), atoi(argv[3]));
+            freeMap(&map);
         } else {
             findPathL(map, atoi(argv[2]), atoi(argv[3]));
+            freeMap(&map);
         }
     } else {
         fprintf(stderr, "Invalid option: %s\n", argv[1]);
