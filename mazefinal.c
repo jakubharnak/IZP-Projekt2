@@ -252,15 +252,25 @@ void next_border(Map map, int r, int c, int from, int leftright) {
     }
 }
 
+bool isBorderPosition(Map map, int r, int c) {
+    return (r == 1 || r == map.rows || c == 1 || c == map.cols);
+}
+
 bool isValidPosition(Map map, int r, int c) {
-    return (r >= 1 && r <= map.rows && c >= 1 && c <= map.cols && !(isborder(map, r, c, 0) && isborder(map, r, c, 1) && isborder(map, r, c, 2) && isborder(map, r, c, 3)));
+    return isBorderPosition(map, r, c) && !(isborder(map, r, c, 0) && isborder(map, r, c, 1) && isborder(map, r, c, 2) && isborder(map, r, c, 3));
 }
 
 // 3. poduloha
 void start_border(Map map, int r, int c, int leftright) {
     int from = 0;
 
-    if (!isValidPosition(map, r, c)) {
+    if (r < 1 || r > map.rows || c < 1 || c > map.cols) {
+        printf("Invalid starting position\n");
+        return;
+    }
+
+    // Additional check to ensure the next position is at the border
+    if (!isBorderPosition(map, r, c)) {
         printf("Invalid starting position\n");
         return;
     }
@@ -351,7 +361,7 @@ void findPathL(Map map, int startRow, int startCol) {
 int main(int argc, char *argv[]) {
 
     if (argc < 2) {
-        fprintf(stderr, "Usage: %s <options>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <--help>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
