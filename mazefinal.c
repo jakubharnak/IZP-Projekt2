@@ -252,9 +252,19 @@ void next_border(Map map, int r, int c, int from, int leftright) {
     }
 }
 
+bool isValidPosition(Map map, int r, int c) {
+    return (r >= 1 && r <= map.rows && c >= 1 && c <= map.cols && !(isborder(map, r, c, 0) && isborder(map, r, c, 1) && isborder(map, r, c, 2) && isborder(map, r, c, 3)));
+}
+
 // 3. poduloha
 void start_border(Map map, int r, int c, int leftright) {
     int from = 0;
+
+    if (!isValidPosition(map, r, c)) {
+        printf("Invalid starting position\n");
+        return;
+    }
+    
     bool isBorder0 = isborder(map, r, c, 0);
     if (isBorder0 == false) {
         if (c - 1 == 0) {
