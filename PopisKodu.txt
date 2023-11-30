@@ -38,3 +38,67 @@ Program vytváří aplikaci pro práci s datovými strukturami, konkrétně pro 
     - Při použití příkazu `--test` načte bludiště ze souboru a vypíše, zda je platné.
     - Příkazy `--rpath` a `--lpath` spustí hledání cesty v bludišti z určeného bodu.
 
+/-------------------------------------------------------------------------------------------------------------------------------------
+
+1. getBit
+bool getBit(unsigned char byte, int p)
+This function takes an unsigned char byte and an integer p.
+It extracts the bit at position p from the byte and returns true if the bit is set (1) and false if it is not set (0).
+It uses bit manipulation to achieve this by shifting the bits in the byte and checking the value of the specific bit.
+
+2. isborder
+bool isborder(Map map, int r, int c, int border)
+This function checks if a specific border of a cell in the map is a border.
+It takes a Map structure, row r, column c, and the border index.
+It retrieves the value of the cell and checks the specified bit to determine if it represents a border.
+The border parameter is used to identify which border is being checked (0 for left, 1 for right, 2 for top, 3 for bottom).
+
+3. next_border
+void next_border(Map map, int r, int c, int from, int leftright)
+This is a recursive function that traverses the borders of the map starting from a given position (r, c).
+from represents the direction from which the function is entering the current cell (0 for left, 1 for right, 2 for top, 3 for bottom).
+leftright is a flag indicating the side of the wall the traversal should follow (0 for right-hand rule, 1 for left-hand rule).
+The function prints the current position (r, c) and then determines the next border to follow based on the current direction and the side specified.
+
+4. isBorderPosition
+bool isBorderPosition(Map map, int r, int c)
+This function checks if a given position (r, c) is on the border of the map.
+Returns true if the position is on the border and false otherwise.
+
+5. isValidPosition
+bool isValidPosition(Map map, int r, int c)
+This function checks if a given position (r, c) is both on the border and not surrounded by walls on all sides.
+Returns true if the position is valid and false otherwise.
+
+6. start_border
+void start_border(Map map, int r, int c, int leftright)
+This function initiates the border traversal from a given starting position (r, c) based on the specified side (leftright).
+It checks if the starting position is valid and then determines the initial direction based on the position.
+
+7. getMapValue
+int getMapValue(Map *map, int r, int c)
+This function retrieves the value of a specific cell in the map given its row r and column c.
+Returns the value of the cell.
+
+8. loadMap
+void loadMap(Map *map, const char *filename)
+This function reads the map data from a file specified by filename and populates the Map structure.
+It reads the size of the map, allocates memory for the cells, and then reads the values for each cell from the file.
+
+9. freeMap
+void freeMap(Map *map)
+This function frees the memory allocated for the cells in the map.
+It checks if the cells are not already NULL before freeing the memory.
+
+10. findPathR and findPathL
+void findPathR(Map map, int startRow, int startCol)
+void findPathL(Map map, int startRow, int startCol)
+These functions serve as interfaces for starting the border traversal based on the specified rule (right-hand or left-hand).
+They call the start_border function with the appropriate parameters.
+
+11. main
+int main(int argc, char *argv[])
+The main function is the entry point of the program.
+It checks the command-line arguments and performs different actions based on the provided options (--help, --test, --rpath, --lpath).
+It loads the map, performs the specified action, and then frees the allocated memory.
+
