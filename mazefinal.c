@@ -11,12 +11,14 @@
 #include <stdbool.h>
 
 // 1. poduloha
+// Define a structure to represent the map
 typedef struct {
-    int rows;
-    int cols;
-    unsigned char *cells;
+    int rows;                   // Number of rows in the map
+    int cols;                   // Number of columns in the map
+    unsigned char *cells;       // Array to store the map cells
 } Map;
 
+// Function to get a specific bit from a byte
 bool getBit(unsigned char byte, int p) {
     for (int i = 2; i >= 0; i--) {
         int b = byte >> i;
@@ -31,6 +33,7 @@ bool getBit(unsigned char byte, int p) {
 }
 
 // 2. poduloha
+// Function to check if a specific border of a cell is a border
 bool isborder(Map map, int r, int c, int border) {
     // if border 0 kontrolujeme lavu hranicu
     // if border 1 kontrolujeme pravu hranicu
@@ -44,6 +47,7 @@ bool isborder(Map map, int r, int c, int border) {
     }
 }
 
+// Recursive function to traverse the borders of the map
 void next_border(Map map, int r, int c, int from, int leftright) {
     if (r < 1 || r > map.rows || c < 1 || c > map.cols) {
         return;
@@ -53,6 +57,7 @@ void next_border(Map map, int r, int c, int from, int leftright) {
     int second = -1;
     int third = -1;
 
+    // Determine the order of checking borders based on position
     if (((r % 2 == 0) && (c % 2 == 1)) || ((r % 2 == 1) && (c % 2 == 0))) {
         if (from == 0) {
             if (leftright == 0) {
@@ -252,18 +257,22 @@ void next_border(Map map, int r, int c, int from, int leftright) {
     }
 }
 
+// Function to check if a position is on the border of the map
 bool isBorderPosition(Map map, int r, int c) {
     return (r == 1 || r == map.rows || c == 1 || c == map.cols);
 }
 
+// Function to check if a position is valid
 bool isValidPosition(Map map, int r, int c) {
     return isBorderPosition(map, r, c) && !(isborder(map, r, c, 0) && isborder(map, r, c, 1) && isborder(map, r, c, 2) && isborder(map, r, c, 3));
 }
 
 // 3. poduloha
+// Function to start the border traversal from a specific position
 void start_border(Map map, int r, int c, int leftright) {
     int from = 0;
 
+    // Check if the starting position is within the map boundaries
     if (r < 1 || r > map.rows || c < 1 || c > map.cols) {
         printf("Invalid starting position\n");
         return;
@@ -275,6 +284,7 @@ void start_border(Map map, int r, int c, int leftright) {
         return;
     }
     
+    // Determine the starting direction based on the position
     bool isBorder0 = isborder(map, r, c, 0);
     if (isBorder0 == false) {
         if (c - 1 == 0) {
@@ -294,13 +304,16 @@ void start_border(Map map, int r, int c, int leftright) {
         }
     }
 
+    // Call the recursive function to traverse the borders
     next_border(map, r, c, from, leftright);
 }
 
+// Function to get the value of a specific cell in the map
 int getMapValue(Map *map, int r, int c) {
     return map->cells[(r - 1) * map->cols + c];
 }
 
+// Function to load the map from a file
 void loadMap(Map *map, const char *filename) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
@@ -308,14 +321,14 @@ void loadMap(Map *map, const char *filename) {
         exit(EXIT_FAILURE);
     }
 
-    // Nacitanie velkosti mapy
+    // Read the map size from the file
     if (fscanf(file, "%d %d", &map->rows, &map->cols) != 2) {
         fprintf(stderr, "err of reading map size\n");
         fclose(file);
         exit(EXIT_FAILURE);
     }
 
-    // Alokace pamatSi pre bunky mapy
+    // Allocate memory for map cells
     map->cells = (unsigned char *)malloc(map->rows * map->cols * sizeof(unsigned char));
     if (map->cells == NULL) {
         fprintf(stderr, "err alocation of memory for map\n");
@@ -323,7 +336,7 @@ void loadMap(Map *map, const char *filename) {
         exit(EXIT_FAILURE);
     }
 
-    // Nacitanie hodnot jednotlivych buniek
+    // Read values of individual cells from the file
     for (int i = 0; i < map->rows; i++) {
         for (int j = 0; j < map->cols; j++) {
             int charakter;
@@ -342,7 +355,7 @@ void loadMap(Map *map, const char *filename) {
     fclose(file);
 }
 
-// Uvolnenie pamati alokovanej pre mapu
+// Function to free the memory allocated for the map
 void freeMap(Map *map) {
     if (map->cells != NULL) {
         free(map->cells);
@@ -350,28 +363,32 @@ void freeMap(Map *map) {
     }
 }
 
+// Function to find and print the path using the right-hand rule
 void findPathR(Map map, int startRow, int startCol) {
     start_border(map, startRow, startCol, 0);
 }
 
+// Function to find and print the path using the left-hand rule
 void findPathL(Map map, int startRow, int startCol) {
     start_border(map, startRow, startCol, 1);
 }
 
 int main(int argc, char *argv[]) {
-
+    
+    // Check the number of command-line arguments
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <--help>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
-    Map map;
+    Map map;// Declare a variable of type Map
 
+    // Check the option provided in the command line
     if (strcmp(argv[1], "--help") == 0) {
-
+        // Print help information
         printf("Usage: %s --help | --test <filename> | --rpath <row> <col> <filename> | --lpath <row> <col> <filename>\n", argv[0]);
     } else if (strcmp(argv[1], "--test") == 0) {
-
+        // Check and load map for testing
         if (argc != 3) {
             fprintf(stderr, "Invalid number of arguments for --test\n");
             return EXIT_FAILURE;
@@ -382,11 +399,13 @@ int main(int argc, char *argv[]) {
         freeMap(&map);
 
     } else if (strcmp(argv[1], "--rpath") == 0 || strcmp(argv[1], "--lpath") == 0) {
+        // Check and load map for finding a path
         if (argc != 5) {
             fprintf(stderr, "Invalid number of arguments for %s\n", argv[1]);
             return EXIT_FAILURE;
         }
         loadMap(&map, argv[4]);
+        // Call the appropriate function based on the option
         if (strcmp(argv[1], "--rpath") == 0) {
             findPathR(map, atoi(argv[2]), atoi(argv[3]));
             freeMap(&map);
@@ -395,6 +414,7 @@ int main(int argc, char *argv[]) {
             freeMap(&map);
         }
     } else {
+        // Print an error for an invalid option
         fprintf(stderr, "Invalid option: %s\n", argv[1]);
         return 1;
     }
