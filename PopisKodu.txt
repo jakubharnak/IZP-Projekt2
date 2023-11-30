@@ -37,3 +37,4 @@ Program vytváří aplikaci pro práci s datovými strukturami, konkrétně pro 
     - Pokud je použit příkaz `--help`, vypíše nápovědu.
     - Při použití příkazu `--test` načte bludiště ze souboru a vypíše, zda je platné.
     - Příkazy `--rpath` a `--lpath` spustí hledání cesty v bludišti z určeného bodu.
+
