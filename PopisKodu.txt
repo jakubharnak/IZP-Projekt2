@@ -1,3 +1,13 @@
+STRUCT
+   rows: An integer representing the number of rows in the map.
+   cols: An integer representing the number of columns in the map.
+   cells: A pointer to an array of unsigned characters (unsigned char), 
+   which is used to store the map cells.
+   This structure is designed to represent a two-dimensional map or grid, 
+   where each cell can be accessed through the cells array. 
+   The dimensions of the map are specified by the rows and cols members.
+
+
 1. GETBIT
 Loop Iteration:
    The function uses a loop with i starting from 2 and decrementing down to 0. 
