@@ -1,104 +1,244 @@
-Program vytváří aplikaci pro práci s datovými strukturami, konkrétně pro manipulaci s bludištěm. Zde je detailnější popis jednotlivých částí programu:
+1. GETBIT
+Loop Iteration:
+   The function uses a loop with i starting from 2 and decrementing down to 0. 
+   This is because it's specifically designed for a byte with 3 bits (positions 0, 1, and 2).
+Right Shifting:
+   Inside the loop, the byte is right-shifted by i positions (byte >> i). 
+   This means, in each iteration, it shifts the bits to the right, isolating one bit at a time.
+Checking the Bit at Position p:
+   The result of the right shift (b) now contains the bit at position p.
+   It checks if i (current position) is equal to p (the specified position).
+Returning the Result
+   If i is equal to p, it checks the least significant bit of b (using b & 1). 
+   If this bit is set (equal to 1), it returns true, indicating that the bit at position p in the original byte was 1. 
+   If not, it returns false.
+End of Loop:
+   If none of the iterations matches the specified position p, the function returns false. 
+   This is to handle the case where the specified position is not within the expected range (0 to 2 for a 3-bit representation).
 
-1. **Definice datové struktury `Map`:**
-   - Struktura obsahuje informace o bludišti, tj. počet řádků a sloupců a pole buněk reprezentovaných pomocí bajtů.
-   - Každý byte obsahuje informace o hranicích dané buňky.
+2.ISBORDER
+Cell Value Retrieval:
+   It calculates the index of the cell in the map.cells array based on the provided row r and column c. 
+   The cell value is stored in the variable cellValue.
+Border Checking:
+   It checks the value of the border parameter to determine which border to check. 
+   The comments provide information about which borders correspond to which values of border.
+Using getBit Function:
+   If border is greater than 2 (i.e., 3 or more), it means the function is checking the upper border. 
+   It calls getBit(cellValue, 2) to check the third bit (index 2) of cellValue.
+   If border is 2 or less (i.e., 0, 1, or 2), it means the function is checking one of the left, right, or bottom borders. 
+   It calls getBit(cellValue, border) to check the bit at the specified position.
+Returning the Result:
+   The function returns the result obtained from the getBit function. 
+   If the specified border bit is set (equal to 1), the function returns true, indicating that it is a border. 
+   If not, it returns false.
 
-2. **Funkce `getBit`:**
-   - Slouží k získání hodnoty jednotlivých bitů z bajtu. Je používána k čtení informací o hranicích buňky.
+The line int cellValue = map.cells[(r - 1) * map.cols + (c - 1)]; 
+is used to retrieve the value of a cell in the map, given the row r and column c coordinates.
 
-3. **Funkce `isborder`:**
-   - Kontroluje přítomnost hranice na zadaném místě v bludišti.
-   - Parametr `border` určuje, kterou hranici kontrolujeme (levou, pravou, horní, dolní).
+3.NEXTBORDER
+Position Determination:
+   The function starts by checking if the current position (r, c) is within the map boundaries. 
+   If it's outside, the function returns without further exploration.
+Order of Checking Borders:
+   The function determines the order of checking borders based on the parity of the row and column indices (r and c). 
+   The comments indicate whether the positioning is Odd-Even, Even-Odd, Even-Even, or Odd-Odd. The order is also influenced by the direction from which the function came (from) and whether it's moving left or right (leftright).
+Border Checking:
+   The function checks the borders in the specified order using the isborder function. 
+   If a border is detected, it proceeds to check the next border. 
+   If not, it moves to the next position based on the order of checking borders.
+Recursive Call:
+   The function makes recursive calls to next_border to explore the next position based on the order 
+   of checking borders and the result of border checks.
 
-4. **Funkce `next_border`:**
-   - Rekurzivně prochází bludiště a hledá cestu na základě pravidel pro přítomnost hranic.
-   - Používá se při hledání cesty v bludišti.
+This function essentially performs a depth-first exploration of the map, moving along borders 
+according to specific rules. 
+The recursive nature allows it to explore multiple paths. 
+The order of checking borders is influenced by the positioning of the current cell in the map.
 
-5. **Funkce `start_border`:**
-   - Určuje, kde začít hledání cesty na základě přítomnosti hranic výchozí buňky.
-   - Při inicializaci se rozhoduje, zda začít hledání směrem vlevo (`leftright = 1`) nebo vpravo (`leftright = 0`).
+4.ISBORDERPOSITION
+   r == 1: Checks if the row r is the first row.
 
-6. **Funkce `getMapValue`:**
-   - Získá hodnotu buňky na zadaných souřadnicích (řádek `r`, sloupec `c`) v bludišti.
+   r == map.rows: Checks if the row r is the last row (equal to the total number of rows in the map).
 
-7. **Funkce `loadMap`:**
-   - Načítá informace o bludišti ze souboru a připravuje paměť pro ukládání dat.
-   - Ukládá informace o jednotlivých buňkách do pole `cells` v rámci struktury `Map`.
+   c == 1: Checks if the column c is the first column.
 
-8. **Funkce `freeMap`:**
-   - Uvolňuje paměť alokovanou pro pole buněk v bludišti.
+   c == map.cols: Checks if the column c is the last column 
+   (equal to the total number of columns in the map).
 
-9. **Funkce `findPathR` a `findPathL`:**
-   - Inicializují hledání cesty v bludišti vpravo (`findPathR`) nebo vlevo (`findPathL`) z daného výchozího bodu.
+If any of these conditions is true, it means that the position (r, c) is on the border 
+of the map, and the function returns true. 
+Otherwise, it returns false.
 
-10. **Hlavní funkce `main`:**
-    - Zpracovává argumenty příkazové řádky.
-    - Pokud je použit příkaz `--help`, vypíše nápovědu.
-    - Při použití příkazu `--test` načte bludiště ze souboru a vypíše, zda je platné.
-    - Příkazy `--rpath` a `--lpath` spustí hledání cesty v bludišti z určeného bodu.
+5.ISVALIDPOSITION
+isBorderPosition(map, r, c): 
+   Checks if the position (r, c) is on the border of the map using the isBorderPosition function. 
+   If it's on the border, this part evaluates to true.
 
-/-------------------------------------------------------------------------------------------------------------------------------------
+isborder(map, r, c, 0) && isborder(map, r, c, 1) && isborder(map, r, c, 2) && isborder(map, r, c, 3): 
+   Checks if the position (r, c) has all four borders. 
+   The isborder function is used to check each individual border. 
+   If all four borders are present, this part evaluates to true.
 
-1. getBit
-bool getBit(unsigned char byte, int p)
-This function takes an unsigned char byte and an integer p.
-It extracts the bit at position p from the byte and returns true if the bit is set (1) and false if it is not set (0).
-It uses bit manipulation to achieve this by shifting the bits in the byte and checking the value of the specific bit.
+!(...): 
+   Negates the result of the condition in the parentheses. 
+   So, if the position has all four borders, this part evaluates to false;
+      otherwise, it evaluates to true.
 
-2. isborder
-bool isborder(Map map, int r, int c, int border)
-This function checks if a specific border of a cell in the map is a border.
-It takes a Map structure, row r, column c, and the border index.
-It retrieves the value of the cell and checks the specified bit to determine if it represents a border.
-The border parameter is used to identify which border is being checked (0 for left, 1 for right, 2 for top, 3 for bottom).
+The final result is true only if the position is on the border (isBorderPosition is true) 
+and does not have all four borders (!(...) is true).
 
-3. next_border
-void next_border(Map map, int r, int c, int from, int leftright)
-This is a recursive function that traverses the borders of the map starting from a given position (r, c).
-from represents the direction from which the function is entering the current cell (0 for left, 1 for right, 2 for top, 3 for bottom).
-leftright is a flag indicating the side of the wall the traversal should follow (0 for right-hand rule, 1 for left-hand rule).
-The function prints the current position (r, c) and then determines the next border to follow based on the current direction and the side specified.
+In other words, the function returns true if the position is at the edge 
+   of the map and is not completely enclosed by borders. 
+It returns false if the position is either not on the border or if it has all four borders, indicating an invalid position
 
-4. isBorderPosition
-bool isBorderPosition(Map map, int r, int c)
-This function checks if a given position (r, c) is on the border of the map.
-Returns true if the position is on the border and false otherwise.
+6.STARTBORDER
+Boundary Checks:
+   The function starts by checking if the provided starting position (r, c) is within the map boundaries. 
+   If it's outside the map, the function prints an error message and returns.
+   It then checks if the starting position is on the border. 
+   If it's not on the border, the function prints an error message and returns.
+Starting Direction Determination:
+   The function checks if each of the three possible borders (left, right, up) is missing at the 
+      starting position. 
+   If a border is missing, it sets the from variable to the corresponding value (0, 1, or 2).
+   For example, if the left border is missing (isBorder0 is false) and the position is at the leftmost 
+      column (c - 1 == 0), it sets from to 0.
+Recursive Call:
+After determining the starting direction (from), it calls the next_border function to initiate the 
+   recursive navigation along the borders.
 
-5. isValidPosition
-bool isValidPosition(Map map, int r, int c)
-This function checks if a given position (r, c) is both on the border and not surrounded by walls on all sides.
-Returns true if the position is valid and false otherwise.
 
-6. start_border
-void start_border(Map map, int r, int c, int leftright)
-This function initiates the border traversal from a given starting position (r, c) based on the specified side (leftright).
-It checks if the starting position is valid and then determines the initial direction based on the position.
+Overall, this function serves as a starting point for navigating along the borders of the map, 
+   considering the direction from which the navigation should begin (from). 
+The actual navigation is then performed by the next_border function. 
+The checks ensure that the starting position is valid for the navigation.
 
-7. getMapValue
-int getMapValue(Map *map, int r, int c)
-This function retrieves the value of a specific cell in the map given its row r and column c.
-Returns the value of the cell.
+WHY void AND NOT int
+Initiation of a Process:
+   The primary purpose of start_border seems to be to initiate a process of navigating along the borders 
+   of a map using the next_border function.
+   The process of navigating doesn't necessarily produce a meaningful numerical result that needs to be 
+   communicated back to the calling code. 
+   It's more about the side effect of printing positions and traversing the map.
+Error Handling:
+   The function performs error checks at the beginning to ensure that the starting position is 
+   within the map boundaries and on the border. 
+   If these checks fail, it prints an error message and returns without proceeding with the navigation.
+   In such error-handling scenarios, it's common to use void when there is no meaningful result to return.
+Side Effects:
+   The primary purpose of the function appears to be to initiate a sequence of actions 
+   (navigation along the borders) rather than to compute and return a result.
+   If the primary purpose is achieved through side effects (e.g., printing output), 
+   it's more idiomatic to use void.
 
-8. loadMap
-void loadMap(Map *map, const char *filename)
-This function reads the map data from a file specified by filename and populates the Map structure.
-It reads the size of the map, allocates memory for the cells, and then reads the values for each cell from the file.
+7.GETMAPVALUE
+Map *map: 
+   The function takes a pointer to a Map structure as its first parameter. 
+   This pointer is used to access the map data.
 
-9. freeMap
-void freeMap(Map *map)
-This function frees the memory allocated for the cells in the map.
-It checks if the cells are not already NULL before freeing the memory.
+int r, int c: 
+   The function takes two integer parameters, r and c, which represent the row and column indices of the 
+   desired cell in the map.
 
-10. findPathR and findPathL
-void findPathR(Map map, int startRow, int startCol)
-void findPathL(Map map, int startRow, int startCol)
-These functions serve as interfaces for starting the border traversal based on the specified rule (right-hand or left-hand).
-They call the start_border function with the appropriate parameters.
+map->cells: 
+   Accesses the cells member of the Map structure using the arrow operator (->). 
+   This member is a one-dimensional array representing the cells of the map.
 
-11. main
-int main(int argc, char *argv[])
-The main function is the entry point of the program.
-It checks the command-line arguments and performs different actions based on the provided options (--help, --test, --rpath, --lpath).
-It loads the map, performs the specified action, and then frees the allocated memory.
+[(r - 1) * map->cols + c]: 
+   Computes the index in the one-dimensional array corresponding to the specified row and column 
+   in the two-dimensional map. 
+   The formula (r - 1) * map->cols + c calculates the linear index by taking into account the number of columns in the map.
 
+return map->cells[(r - 1) * map->cols + c];: 
+   Returns the value stored in the computed index.
+
+8.LOADMAP
+File Opening:
+   The function starts by opening the specified file (filename) in read mode ("r").
+   If the file opening fails (file == NULL), an error message is printed to stderr, 
+   and the program exits with a failure status.
+Reading Map Size:
+   The function uses fscanf to read two integers from the file, representing the number of rows 
+   and columns in the map. 
+   These values are stored in the map->rows and map->cols members of the Map structure.
+   If the number of values read is not equal to 2 (i.e., there was an error reading), 
+   an error message is printed, and the program exits with a failure status.
+Memory Allocation for Map Cells:
+   The function dynamically allocates memory for the map cells using malloc. 
+   The size of the allocation is calculated based on the number of rows and columns in the map.
+   If the memory allocation fails (map->cells == NULL), an error message is printed, 
+   and the program exits with a failure status.
+Reading Individual Cells from the File:
+   The function then uses nested loops to read individual cell values from the file. 
+   Each value is read into the charakter variable.
+   If the reading operation fails (returns a value other than 1), an error message is printed, 
+   and the program exits with a failure status.
+   The read value is cast to unsigned char and stored in the appropriate position in the 
+   dynamically allocated map->cells array.
+File Closure:
+   Finally, the function closes the file using fclose.
+
+The function performs error handling throughout the process, 
+ensuring that any failure during file handling, memory allocation, 
+or reading results in appropriate error messages and program termination.
+
+9.FREEMAP
+Check for Non-NULL Pointer:
+   The function begins by checking if the map->cells pointer is not NULL.
+   This check is essential to ensure that the pointer is valid and points to dynamically allocated memory.
+Freeing Memory:
+   If the pointer is not NULL, the free function is called to deallocate the memory 
+   block pointed to by map->cells.
+   After the memory is freed, the function sets the map->cells pointer to NULL. 
+   This step is good practice to avoid using a dangling pointer, as it makes it clear that the 
+   memory has been freed.
+
+This function is part of resource management and helps prevent memory leaks by releasing the 
+memory allocated for map cells when it is no longer needed. 
+Developers should call this function when they are done using a Map structure and want to 
+release the associated memory.
+
+10.FINDPATH
+findPathR Function:
+   This function is a wrapper that calls the start_border function with the given Map (map)
+   and starting position (startRow and startCol) and a parameter 0 indicating the use of the right-hand rule.
+findPathL Function:
+   Similarly, this function is a wrapper that calls the start_border function with the same parameters 
+   but with a value of 1, indicating the use of the left-hand rule.
+start_border Function:
+   The start_border function, in turn, initiates the traversal of the map's borders based on the 
+   specified starting position and rule (right-hand or left-hand). 
+   It calls the next_border function recursively to navigate along the borders.
+next_border Function:
+   The next_border function is a recursive function that traverses the borders of the map. 
+   It determines the order of checking borders based on the position and then recursively moves to 
+   the next border according to certain rules.
+
+In summary, these functions are part of a program designed to navigate along the borders of a map 
+based on either the right-hand or left-hand rule. 
+The actual navigation logic and traversal rules are implemented in the next_border function, 
+while findPathR and findPathL serve as high-level functions to initiate the traversal based on the 
+specified rule.
+
+11.MAIN
+Command-Line Argument Handling:
+   The program checks whether there are at least two command-line arguments. 
+   If not, it prints a usage message and exits with a failure status.
+Map Declaration and Initialization:
+   An instance of the Map structure is declared to store map information.
+Option Handling:
+   The program checks the provided command-line option and executes the corresponding functionality. 
+   It supports options like --help, --test, --rpath, and --lpath.
+Load Map for Testing:
+   If the option is --test, it checks if the correct number of arguments is provided and loads 
+   the map from the specified file for testing.
+Find Path Options:
+   If the option is --rpath or --lpath, it checks if the correct number of arguments is provided, 
+   loads the map, and then calls the appropriate function (findPathR or findPathL) 
+   to find and print the path.
+Return Status:
+   The program exits with a success status.
+
+Overall, the main function serves as the entry point for the program 
+and orchestrates different functionalities based on the provided command-line options.
