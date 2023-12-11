@@ -52,7 +52,9 @@ Position Determination:
    If it's outside, the function returns without further exploration.
 Order of Checking Borders:
    The function determines the order of checking borders based on the parity of the row and column indices (r and c). 
-   The comments indicate whether the positioning is Odd-Even, Even-Odd, Even-Even, or Odd-Odd. The order is also influenced by the direction from which the function came (from) and whether it's moving left or right (leftright).
+   The comments indicate whether the positioning is Odd-Even, Even-Odd, Even-Even, or Odd-Odd. 
+   The order is also influenced by the direction from which the function came (from) and whether it's moving left 
+   or right (leftright).
 Border Checking:
    The function checks the borders in the specified order using the isborder function. 
    If a border is detected, it proceeds to check the next border. 

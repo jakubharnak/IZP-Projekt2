@@ -1,10 +1,13 @@
-/*
- * file:       	 maze.c
- * compilation:  gcc -std=c11 -Wall -Wextra -Werror maze.c -o maze
- * author:       Jakub Harnak, xharnaj00
- * Projekt 2:    Prace s datovymi strukturami
+/**
+ * @file mazefinal.c
+ * @author Jakub Harňák (xharnaj00@stud.fit.vutbr.cz)
+ * @brief 
+ * @version 0.1
+ * @date 2023-12-04
+ * 
+ * @copyright Copyright (c) 2023
+ * 
  */
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
